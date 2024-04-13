@@ -1,0 +1,39 @@
+from flask import Flask, jsonify
+
+app = Flask (__name__)
+tasks = [
+    {"ip":"201.152.212.210","active" : True},
+    {"hostname":"hostname","active":True},
+    
+]
+
+@app.route('/tasks' , methods=['GET'])
+def get_tasks():
+    return jsonify(tasks)
+
+import requests
+
+def get_host_and_ip():
+    try:
+        
+        response = requests.get('https://ipinfo.io')
+        
+        
+        if response.status_code == 200:
+            data = response.json()
+            
+            hostname = data.get('hostname', 'No se encuentra disponible')
+            ip = data.get('ip', 'No se encuentra disponible')
+            return hostname, ip
+        else:
+            print("Error al solicitar datos de la API:", response.status_code)
+            return None, None
+    except Exception as e:
+        print("Error al solicitar datos de la API:", e)
+        return None, None
+
+if __name__ == "__main__":
+    hostname, ip = get_host_and_ip()
+    if hostname and ip:
+        print("Hostname:", hostname)
+        print("IP:", ip)
